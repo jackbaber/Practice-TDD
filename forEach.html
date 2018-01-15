@@ -1,0 +1,57 @@
+<script src="simpletest.js"></script>
+<script>
+//Task - create a working forEach function that passes a set of tests 
+//Example 1
+//forEach([1, 2, 3], function(){
+// console.log('hi');
+//})
+
+//Example 2
+//forEach([1, 2, 3], function(number){
+//  console.log(number);
+//})
+
+function forEach(array, callback, optionalThisObject){
+  var boundCallback = callback;
+  for(var i = 0; i < array.length; i++){
+    boundCallback = callback.bind(optionalThisObject);
+    boundCallback(array[i], i, array);
+  }
+}
+
+tests({
+
+'It should take an array, iterate through it and run a callback function a number of times equal to array.length': function() {
+  var numberOfTimesCallbackRun = 0;
+  forEach([1, 2, 3], function(){
+    numberOfTimesCallbackRun++;
+  })
+  eq(numberOfTimesCallbackRun, 3);
+},
+
+'It should pass in the ith element as the first argument to the callback': function() {
+  forEach([1], function(number){
+    eq(number, 1);
+  })
+},
+
+'It should pass in the ith position as the second argument to the callback': function() {
+  forEach([1], function(number, index){
+    eq(index, 0);
+  })
+},
+
+'It should pass in the originalArray as the third argument to the callback': function() {
+  var testArray = [1, 2, 3];
+  forEach(testArray, function(number, index, originalArray){
+    eq(originalArray, testArray);
+  })
+},
+
+'It should pass in an optionalThisObject which can be used as the this reference object when executing callback': function() {
+  forEach([1, 2, 3], function(number, index, originalArray){
+    eq(this.description, 'I am accessible within the callback');
+  }, {description: 'I am accessible within the callback'})
+}
+});
+</script>
